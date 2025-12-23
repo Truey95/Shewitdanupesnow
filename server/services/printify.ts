@@ -61,16 +61,19 @@ class RateLimiter {
 }
 
 class PrintifyService {
-  private apiKey: string | null;
-  public isConfigured: boolean;
+  public get apiKey(): string | null {
+    return process.env.PRINTIFY_API_KEY || null;
+  }
+
+  public get isConfigured(): boolean {
+    return !!this.apiKey;
+  }
+
   private generalRateLimiter: RateLimiter;
   private publishRateLimiter: RateLimiter;
   private appName: string;
 
   constructor() {
-    this.apiKey = process.env.PRINTIFY_API_KEY || null;
-    this.isConfigured = !!this.apiKey;
-
     // 10 requests per second for general API
     this.generalRateLimiter = new RateLimiter(10);
 
@@ -80,10 +83,17 @@ class PrintifyService {
     // Application name for User-Agent
     this.appName = 'LuxuryApparel-Ecommerce';
 
-    // Enhanced logging for deployment debugging
+    // Enhanced logging for deployment debugging - run immediately on instantiation
+    this.logInitialization();
+  }
+
+  private logInitialization() {
     console.log('[PrintifyService] Initialization Status:');
-    console.log(`[PrintifyService] API Key exists: ${!!this.apiKey}`);
-    console.log(`[PrintifyService] API Key length: ${this.apiKey ? this.apiKey.length : 0}`);
+    console.log(`[PrintifyService] API Key exists (runtime check): ${!!this.apiKey}`);
+    if (this.apiKey) {
+      console.log(`[PrintifyService] API Key length: ${this.apiKey.length}`);
+      console.log(`[PrintifyService] API Key prefix: ${this.apiKey.substring(0, 5)}...`);
+    }
     console.log(`[PrintifyService] Environment check: PRINTIFY_API_KEY is ${process.env.PRINTIFY_API_KEY ? 'set' : 'not set'}`);
 
     if (!this.isConfigured) {
@@ -100,23 +110,10 @@ class PrintifyService {
     }
   }
 
-  // Method to refresh configuration (useful for deployment environments)
+  // Method to refresh configuration (logging only now, as we read env var usage directly)
   public refreshConfiguration() {
-    console.log('[PrintifyService] Refreshing configuration...');
-    const oldConfigured = this.isConfigured;
-
-    this.apiKey = process.env.PRINTIFY_API_KEY || null;
-    this.isConfigured = !!this.apiKey;
-
-    console.log(`[PrintifyService] Configuration refresh: ${oldConfigured} -> ${this.isConfigured}`);
-    console.log(`[PrintifyService] API Key exists after refresh: ${!!this.apiKey}`);
-
-    if (this.isConfigured && !oldConfigured) {
-      console.log('[PrintifyService] ✅ Configuration restored successfully');
-    } else if (!this.isConfigured) {
-      console.error('[PrintifyService] ❌ Configuration still not available after refresh');
-    }
-
+    console.log('[PrintifyService] Refreshing configuration check...');
+    this.logInitialization();
     return this.isConfigured;
   }
 
