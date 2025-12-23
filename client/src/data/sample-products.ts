@@ -22,6 +22,8 @@ export const sampleProducts: PrintifyProduct[] = [
         sku: "BLK-TSH-S",
         price: 24.99,
         is_enabled: true,
+        is_available: true,
+        title: "Black / S",
         options: { color: "Black", size: "S" },
         quantity: 10
       },
@@ -30,6 +32,8 @@ export const sampleProducts: PrintifyProduct[] = [
         sku: "BLK-TSH-M",
         price: 24.99,
         is_enabled: true,
+        is_available: true,
+        title: "Black / M",
         options: { color: "Black", size: "M" },
         quantity: 15
       },
@@ -38,6 +42,8 @@ export const sampleProducts: PrintifyProduct[] = [
         sku: "BLK-TSH-L",
         price: 24.99,
         is_enabled: true,
+        is_available: true,
+        title: "Black / L",
         options: { color: "Black", size: "L" },
         quantity: 12
       }
@@ -67,6 +73,8 @@ export const sampleProducts: PrintifyProduct[] = [
         sku: "GRY-HOD-S",
         price: 49.99,
         is_enabled: true,
+        is_available: true,
+        title: "Gray / S",
         options: { color: "Gray", size: "S" },
         quantity: 8
       },
@@ -75,6 +83,8 @@ export const sampleProducts: PrintifyProduct[] = [
         sku: "GRY-HOD-M",
         price: 49.99,
         is_enabled: true,
+        is_available: true,
+        title: "Gray / M",
         options: { color: "Gray", size: "M" },
         quantity: 10
       },
@@ -83,6 +93,8 @@ export const sampleProducts: PrintifyProduct[] = [
         sku: "GRY-HOD-L",
         price: 49.99,
         is_enabled: true,
+        is_available: true,
+        title: "Gray / L",
         options: { color: "Gray", size: "L" },
         quantity: 5
       }
@@ -112,6 +124,8 @@ export const sampleProducts: PrintifyProduct[] = [
         sku: "BLU-CAP-OS",
         price: 19.99,
         is_enabled: true,
+        is_available: true,
+        title: "Blue / One Size",
         options: { color: "Blue", size: "One Size" },
         quantity: 20
       }
