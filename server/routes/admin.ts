@@ -101,3 +101,8 @@ router.get("/stats", async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "Failed to get system statistics"
+    });
+  }
+});
+
+export default router;
