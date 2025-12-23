@@ -10,12 +10,9 @@ const ADMIN_CREDENTIALS = {
   password: process.env.ADMIN_PASSWORD || "nupeonly"
 };
 
-// Generate a secure JWT secret if not provided
-const generateSecureSecret = () => {
-  return randomBytes(64).toString('hex');
-};
-
-const JWT_SECRET = process.env.JWT_SECRET || generateSecureSecret();
+// Use a stable secret for serverless environments where instances recycle frequently
+// In production, ALWAYS set JWT_SECRET in environment variables
+const JWT_SECRET = process.env.JWT_SECRET || "nupe-style-studio-stable-secret-key-2024";
 
 // Admin login
 router.post("/login", async (req: Request, res: Response) => {

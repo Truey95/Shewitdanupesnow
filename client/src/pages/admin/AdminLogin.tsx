@@ -149,7 +149,7 @@ export default function AdminLogin() {
           </Form>
 
           <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Default credentials: admin / admin123</p>
+            <p>Default credentials: TCFE / nupeonly</p>
           </div>
         </CardContent>
       </Card>
