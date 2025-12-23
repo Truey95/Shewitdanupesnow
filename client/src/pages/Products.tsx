@@ -17,8 +17,8 @@ export default function Products() {
   // First, get the shops
   const { data: shopsData, isLoading: isLoadingShops, error: shopsError } = usePrintifyShops();
 
-  // Get products from the first shop (if available)
-  const shopId = Array.isArray(shopsData) && shopsData[0]?.id;
+  // Get products from the first shop (if available) or fallback to the known shop ID
+  const shopId = (Array.isArray(shopsData) && shopsData[0]?.id) || "21023003";
   const { data: productsData, isLoading: isLoadingProducts, error: productsError } = usePrintifyProducts(shopId || "");
 
   // Effect to show errors if any
@@ -58,9 +58,9 @@ export default function Products() {
   }, [shopsData, productsData]);
 
   // Extract products from the API response
-  const products: PrintifyProduct[] = (productsData && productsData.data && Array.isArray(productsData.data)) 
-                  ? productsData.data 
-                  : [];
+  const products: PrintifyProduct[] = (productsData && productsData.data && Array.isArray(productsData.data))
+    ? productsData.data
+    : [];
 
   // Filter products based on search
   const filteredProducts = products.filter((product: PrintifyProduct) => {
@@ -81,7 +81,7 @@ export default function Products() {
     <div className="container mx-auto px-4 py-8">
       {/* API Configuration Alert */}
       <ApiConfigAlert />
-      
+
       {/* Filters */}
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <Input
@@ -124,7 +124,7 @@ export default function Products() {
           ) : (
             filteredProducts.map((product) => (
               <Card key={product.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
-                <Link href={`/product/${product.id}`} className="block"> 
+                <Link href={`/product/${product.id}`} className="block">
                   <div className="relative aspect-square overflow-hidden">
                     <img
                       src={getProductImage(product)}
@@ -137,7 +137,7 @@ export default function Products() {
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
                   </div>
                 </Link>
-                
+
                 <CardContent className="p-4">
                   <Link href={`/product/${product.id}`} className="block">
                     <h3 className="font-medium text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">{product.title}</h3>
@@ -150,14 +150,14 @@ export default function Products() {
                       })()}
                     </p>
                   </Link>
-                  
+
                   <div className="flex items-center justify-between gap-2">
                     <Button variant="secondary" className="flex-1" asChild>
                       <Link href={`/product/${product.id}`}>View Details</Link>
                     </Button>
-                    
-                    <Button 
-                      variant="outline" 
+
+                    <Button
+                      variant="outline"
                       className="flex-1"
                       onClick={(e) => {
                         e.preventDefault();
@@ -165,7 +165,7 @@ export default function Products() {
                         if (product.variants && product.variants.length > 0) {
                           const enabledVariant = product.variants.find(v => v.is_enabled) || product.variants[0];
                           const size = enabledVariant.options?.size || 'One Size';
-                          
+
                           addToCart({
                             id: typeof product.id === 'string' ? parseInt(product.id) : 9999,
                             name: product.title,
@@ -174,7 +174,7 @@ export default function Products() {
                             image: getProductImage(product),
                             quantity: 1,
                           });
-                          
+
                           toast({
                             title: "Added to cart",
                             description: `${product.title} - ${size}`,
