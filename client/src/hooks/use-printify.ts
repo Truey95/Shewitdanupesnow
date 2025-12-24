@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { 
-  PrintifyProduct, 
-  PrintifyShop, 
+import type {
+  PrintifyProduct,
+  PrintifyShop,
   PrintifyCreateProductPayload,
   PrintifyPublishProductPayload
 } from "@/types/printify";
@@ -37,13 +37,13 @@ export function usePrintifyProduct(shopId: string, productId: string) {
     enabled: !!shopId && !!productId,
     queryFn: async () => {
       const response = await fetch(`/api/printify/shops/${shopId}/products/${productId}`);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch product: ${response.statusText}`);
       }
-      
+
       const result = await response.json();
-      
+
       // Handle both wrapped and direct responses
       return result.data || result;
     },
@@ -54,7 +54,7 @@ export function usePrintifyProduct(shopId: string, productId: string) {
 
 export function useCreatePrintifyProduct(shopId: string) {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (productData: PrintifyCreateProductPayload) => {
       const response = await fetch(`/api/printify/shops/${shopId}/products`, {
@@ -64,12 +64,12 @@ export function useCreatePrintifyProduct(shopId: string) {
         },
         body: JSON.stringify(productData)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.details || 'Failed to create product');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -81,7 +81,7 @@ export function useCreatePrintifyProduct(shopId: string) {
 
 export function usePublishPrintifyProduct(shopId: string, productId: string) {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (publishData: PrintifyPublishProductPayload = {}) => {
       const response = await fetch(`/api/printify/shops/${shopId}/products/${productId}/publish`, {
@@ -91,12 +91,12 @@ export function usePublishPrintifyProduct(shopId: string, productId: string) {
         },
         body: JSON.stringify(publishData)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.details || 'Failed to publish product');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -109,7 +109,7 @@ export function usePublishPrintifyProduct(shopId: string, productId: string) {
 
 export function useHaltPrintifyPublishing(shopId: string, productId: string) {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async () => {
       const response = await fetch(`/api/printify/shops/${shopId}/products/${productId}/halt-publishing`, {
@@ -118,12 +118,12 @@ export function useHaltPrintifyPublishing(shopId: string, productId: string) {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.details || 'Failed to halt publishing');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -134,7 +134,7 @@ export function useHaltPrintifyPublishing(shopId: string, productId: string) {
 
 export function useResetPrintifyPublishing(shopId: string, productId: string) {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async () => {
       const response = await fetch(`/api/printify/shops/${shopId}/products/${productId}/reset-publishing`, {
@@ -143,12 +143,12 @@ export function useResetPrintifyPublishing(shopId: string, productId: string) {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.details || 'Failed to reset publishing status');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -161,6 +161,13 @@ export function useResetPrintifyPublishing(shopId: string, productId: string) {
 export function usePrintifyPublishingStatus(shopId: string, productId: string) {
   return useQuery({
     queryKey: [`/api/printify/shops/${shopId}/products/${productId}/publishing-status`],
+    queryFn: async () => {
+      const response = await fetch(`/api/printify/shops/${shopId}/products/${productId}/publishing-status`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch publishing status');
+      }
+      return response.json();
+    },
     enabled: !!shopId && !!productId,
     retry: false,
     refetchInterval: 5000 // Poll every 5 seconds for status updates
@@ -169,7 +176,7 @@ export function usePrintifyPublishingStatus(shopId: string, productId: string) {
 
 export function useUnpublishPrintifyProduct(shopId: string, productId: string) {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async () => {
       const response = await fetch(`/api/printify/shops/${shopId}/products/${productId}/unpublish`, {
@@ -178,12 +185,12 @@ export function useUnpublishPrintifyProduct(shopId: string, productId: string) {
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.details || 'Failed to unpublish product');
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
@@ -196,7 +203,7 @@ export function useUnpublishPrintifyProduct(shopId: string, productId: string) {
 // Manual refresh function for when prices are updated in Printify
 export function useRefreshPrintifyData() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async () => {
       // Force a fresh fetch of all Printify data

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,12 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  usePublishPrintifyProduct, 
-  useHaltPrintifyPublishing, 
+import {
+  usePublishPrintifyProduct,
+  useHaltPrintifyPublishing,
   useResetPrintifyPublishing,
   usePrintifyPublishingStatus,
-  useUnpublishPrintifyProduct 
+  useUnpublishPrintifyProduct
 } from "@/hooks/use-printify";
 import { Loader2, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 
@@ -93,7 +93,7 @@ export function PublishingManager({ shopId, productId, productTitle }: Publishin
       });
     } catch (error) {
       toast({
-        title: "Reset Failed", 
+        title: "Reset Failed",
         description: error instanceof Error ? error.message : "Failed to reset publishing status",
         variant: "destructive",
       });
@@ -181,7 +181,7 @@ export function PublishingManager({ shopId, productId, productTitle }: Publishin
         {/* External Channels */}
         <div className="space-y-4">
           <h4 className="font-medium">External Channels</h4>
-          
+
           {/* Shopify */}
           <div className="flex items-center justify-between p-3 border rounded-lg">
             <div className="flex items-center space-x-2">
@@ -298,7 +298,7 @@ export function PublishingManager({ shopId, productId, productTitle }: Publishin
         <div className="space-y-2">
           {/* Primary Actions */}
           <div className="flex gap-2">
-            <Button 
+            <Button
               onClick={handlePublish}
               disabled={publishMutation.isPending}
               className="flex-1"
@@ -307,7 +307,7 @@ export function PublishingManager({ shopId, productId, productTitle }: Publishin
               Publish Product
             </Button>
 
-            <Button 
+            <Button
               variant="outline"
               onClick={handleHaltPublishing}
               disabled={haltMutation.isPending}
@@ -323,7 +323,7 @@ export function PublishingManager({ shopId, productId, productTitle }: Publishin
             <p className="text-sm text-yellow-700 mb-2">
               If your product is stuck in publishing state and you can't edit titles or pricing, use this reset function.
             </p>
-            <Button 
+            <Button
               variant="outline"
               onClick={handleResetPublishing}
               disabled={resetMutation.isPending}
@@ -336,7 +336,7 @@ export function PublishingManager({ shopId, productId, productTitle }: Publishin
 
           {/* Destructive Actions */}
           <div className="flex gap-2">
-            <Button 
+            <Button
               variant="destructive"
               onClick={handleUnpublish}
               disabled={unpublishMutation.isPending}
