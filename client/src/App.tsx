@@ -22,6 +22,7 @@ import HWDKN from "@/pages/collections/HWDKN";
 import HWDRN from "@/pages/collections/HWDRN";
 import HWDZN from "@/pages/collections/HWDZN";
 import HWDPN from "@/pages/collections/HWDPN";
+import { AdminAuthProvider } from "@/context/admin-auth-context";
 
 function Router() {
   return (
@@ -32,13 +33,19 @@ function Router() {
       <Route path="/cart" component={Cart} />
       <Route path="/try-it-on" component={TryItOn} />
       <Route path="/new-arrivals" component={NewArrivals} />
-      
+
       {/* Admin Routes */}
       <Route path="/admin" component={AdminLogin} />
       <Route path="/admin/login" component={AdminLogin} />
+
+      {/* All Dashboard routes handled by AdminDashboard component which uses internal routing based on path */}
       <Route path="/admin/dashboard" component={AdminDashboard} />
-      <Route path="/admin/products" component={ProductUpload} />
-      
+      <Route path="/admin/products" component={AdminDashboard} />
+      <Route path="/admin/categories" component={AdminDashboard} />
+      <Route path="/admin/orders" component={AdminDashboard} />
+      <Route path="/admin/events" component={AdminDashboard} />
+      <Route path="/admin/sync" component={AdminDashboard} />
+
       {/* Shopify Routes */}
       <Route path="/shopify" component={ShopifyProducts} />
       <Route path="/shopify/product/:productId" component={ShopifyProductDetail} />
@@ -50,7 +57,7 @@ function Router() {
       <Route path="/collections/hwdrn" component={HWDRN} />
       <Route path="/collections/hwdzn" component={HWDZN} />
       <Route path="/collections/hwdpn" component={HWDPN} />
-      
+
       {/* Tours and Events Route */}
       <Route path="/tours-and-events" component={ToursAndEvents} />
 
@@ -65,7 +72,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Navigation />
       <main className="min-h-screen bg-background">
-        <Router />
+        <AdminAuthProvider>
+          <Router />
+        </AdminAuthProvider>
       </main>
       <Toaster />
     </QueryClientProvider>

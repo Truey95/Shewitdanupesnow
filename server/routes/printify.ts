@@ -4,6 +4,19 @@ import { orderHandlers } from '../services/orderService';
 
 const router = express.Router();
 
+// Simple connection test route (No external deps)
+router.get('/test', (_req, res) => {
+    res.json({
+        ok: true,
+        message: "Printify router is working",
+        timestamp: new Date().toISOString(),
+        env: {
+            hasKey: !!process.env.PRINTIFY_API_KEY,
+            nodeVersion: process.version
+        }
+    });
+});
+
 // Configuration status and refresh routes
 router.get('/status', printifyHandlers.getConfigurationStatus);
 router.post('/refresh-config', printifyHandlers.refreshConfiguration);

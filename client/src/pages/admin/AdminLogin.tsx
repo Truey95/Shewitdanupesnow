@@ -4,10 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Lock, User } from "lucide-react";
+import { Lock, User, ShieldCheck } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
@@ -46,14 +45,11 @@ export default function AdminLogin() {
       });
 
       if (!response.ok) {
-        // Handle non-JSON responses (like Vercel 500 errors)
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
           const errorData = await response.json();
           throw new Error(errorData.message || "Login failed");
         } else {
-          const textError = await response.text();
-          console.error("Non-JSON error response:", textError);
           throw new Error("Server error. Please check logs.");
         }
       }
@@ -64,8 +60,9 @@ export default function AdminLogin() {
       localStorage.setItem("adminToken", result.token);
 
       toast({
-        title: "Login successful",
-        description: "Welcome to the admin dashboard",
+        title: "Access Granted",
+        description: "Welcome back to the command center.",
+        className: "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200",
       });
 
       setLocation("/admin/dashboard");
@@ -77,39 +74,51 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-            <Lock className="w-6 h-6 text-primary" />
+    <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7] relative overflow-hidden">
+      {/* Background Ambience */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-amber-200/20 rounded-full blur-[120px] mix-blend-multiply opacity-70 animate-blob"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-orange-200/20 rounded-full blur-[120px] mix-blend-multiply opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-[40%] left-[40%] w-[400px] h-[400px] bg-yellow-100/30 rounded-full blur-[100px] mix-blend-multiply opacity-70 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <div className="w-full max-w-md p-8 relative z-10">
+        <div className="bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8">
+          <div className="text-center mb-8">
+            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-50 rounded-2xl flex items-center justify-center mb-4 shadow-inner border border-white">
+              <ShieldCheck className="w-8 h-8 text-amber-600" />
+            </div>
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+              Admin Access
+            </h1>
+            <p className="text-gray-500 mt-2 text-sm">
+              Authenticate to access the Kinetic Dashboard
+            </p>
           </div>
-          <CardTitle className="text-2xl font-bold">Admin Portal</CardTitle>
-          <CardDescription>
-            Sign in to access the developer dashboard and Printify integration tools
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+
           {error && (
-            <Alert variant="destructive" className="mb-4">
+            <Alert variant="destructive" className="mb-6 bg-red-50 border-red-100 text-red-800">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Username</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <User className="h-5 w-5 text-gray-400 group-focus-within:text-amber-500 transition-colors" />
+                        </div>
                         <Input
                           {...field}
+                          className="pl-10 bg-white/50 border-gray-200 focus:border-amber-400 focus:ring-amber-200/50 rounded-xl h-11 transition-all"
                           placeholder="Enter your username"
-                          className="pl-10"
                           disabled={isLoading}
                         />
                       </div>
@@ -124,15 +133,17 @@ export default function AdminLogin() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-gray-700 font-medium">Password</FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-amber-500 transition-colors" />
+                        </div>
                         <Input
                           {...field}
                           type="password"
-                          placeholder="Enter your password"
-                          className="pl-10"
+                          className="pl-10 bg-white/50 border-gray-200 focus:border-amber-400 focus:ring-amber-200/50 rounded-xl h-11 transition-all"
+                          placeholder="••••••••"
                           disabled={isLoading}
                         />
                       </div>
@@ -142,17 +153,30 @@ export default function AdminLogin() {
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign In"}
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-gray-900 to-gray-800 hover:from-black hover:to-gray-900 text-white shadow-lg shadow-gray-200/50 rounded-xl h-12 text-base font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                    Authenticating...
+                  </div>
+                ) : (
+                  "Enter Dashboard"
+                )}
               </Button>
             </form>
           </Form>
 
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Default credentials: TCFE / nupeonly</p>
+          <div className="mt-8 text-center">
+            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-gray-50 border border-gray-100 text-xs text-gray-400">
+              Secure Environment • v2.0.0
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
