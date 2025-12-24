@@ -1,16 +1,11 @@
-import { drizzle } from "drizzle-orm/neon-serverless";
-import { neonConfig, Pool } from "@neondatabase/serverless";
-import ws from "ws";
+import { drizzle } from "drizzle-orm/node-postgres";
+import pg from "pg";
+const { Pool } = pg;
 import * as schema from "./schema.js";
 
 // Warn instead of crashing completely
 if (!process.env.DATABASE_URL) {
   console.warn("WARNING: DATABASE_URL is not set. Database operations will fail.");
-}
-
-// Configure Neon for server environment
-if (typeof globalThis !== 'undefined') {
-  neonConfig.webSocketConstructor = ws;
 }
 
 // Create the database connection safely
