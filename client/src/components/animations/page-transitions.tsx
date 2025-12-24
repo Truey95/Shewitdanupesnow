@@ -8,7 +8,7 @@ export const pageTransition = {
 
 export const fadeInStagger = {
   initial: { opacity: 0 },
-  animate: { 
+  animate: {
     opacity: 1,
     transition: { staggerChildren: 0.1 }
   },
@@ -23,7 +23,7 @@ export const itemFadeIn = {
 export const swdnnAnimations = {
   container: {
     initial: { backgroundColor: "#000" },
-    animate: { backgroundColor: "cream" },
+    animate: { backgroundColor: "#FFFDD0" },
     transition: { duration: 0.8 }
   },
   text: {
