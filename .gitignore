@@ -9,3 +9,4 @@ vite.config.ts.*
 .local
 attached_assets
 generated-icon.png
+.vercel

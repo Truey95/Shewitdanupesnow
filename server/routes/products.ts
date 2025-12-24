@@ -279,7 +279,7 @@ router.get('/category/:category', async (req, res) => {
 
     const categoryProducts = await db.query.products.findMany({
       where: eq(products.category, category),
-      orderBy: (products, { desc }) => [desc(products.createdAt)]
+      orderBy: (products, { desc }: any) => [desc(products.createdAt)]
     });
 
     res.json({
@@ -475,7 +475,7 @@ router.post('/sync-prices', async (req, res) => {
 
     // Get all products from database that have Printify IDs
     const localProducts = await db.query.products.findMany({
-      where: (products, { isNotNull }) => isNotNull(products.printifyProductId)
+      where: (products, { isNotNull }: any) => isNotNull(products.printifyProductId)
     });
 
     console.log(`[PriceSync] Found ${localProducts.length} products with Printify IDs`);

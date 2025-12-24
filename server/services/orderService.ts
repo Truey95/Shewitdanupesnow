@@ -302,7 +302,7 @@ class OrderService {
         },
         limit,
         offset,
-        orderBy: (orders, { desc }) => [desc(orders.createdAt)]
+        orderBy: (orders, { desc }: any) => [desc(orders.createdAt)]
       });
 
       return allOrders;
