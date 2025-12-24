@@ -5,10 +5,16 @@ import { Buffer } from "buffer";
 const router = Router();
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Lazy init inside handler to prevent crash on startup if key is missing
 
 router.post("/api/try-on", async (req, res) => {
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(503).json({ error: "OpenAI API key not configured" });
+    }
+
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
     const { userPhoto, selectedItem } = req.body;
 
     // Remove data URL prefix to get base64
