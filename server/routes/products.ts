@@ -589,13 +589,30 @@ router.post('/sync-all', async (req, res) => {
 
         const imageUrl = pProduct.images?.[0]?.src || '';
 
-        // Simple auto-categorization
-        const titleLower = pProduct.title.toLowerCase();
-        let category = 'swdnn'; // default
-        if (pProduct.tags && Array.isArray(pProduct.tags)) {
-          if (pProduct.tags.some((t: string) => t.toLowerCase() === 'hoodie') || titleLower.includes('hoodie')) category = 'hoodies';
-          else if (pProduct.tags.some((t: string) => t.toLowerCase().includes('shirt')) || titleLower.includes('shirt') || titleLower.includes('tee')) category = 't-shirts';
-          else if (pProduct.tags.some((t: string) => t.toLowerCase() === 'hat') || titleLower.includes('hat') || titleLower.includes('cap')) category = 'hats';
+        // Strict keyword-based categorization
+        const titleUpper = pProduct.title.toUpperCase();
+        let category = 'swdnn'; // default fallback
+
+        if (titleUpper.includes('SWDNN')) {
+          category = 'swdnn';
+        } else if (titleUpper.includes('HWDKN')) {
+          category = 'hwdkn';
+        } else if (titleUpper.includes('HWDZN')) {
+          category = 'hwdzn';
+        } else if (titleUpper.includes('HWDRN')) {
+          category = 'hwdrn';
+        } else if (titleUpper.includes('HWDPN') || titleUpper.includes('HWTPN')) {
+          category = 'hwdpn';
+        } else {
+          // General type-based categorization for non-special items
+          if (pProduct.tags && Array.isArray(pProduct.tags)) {
+            if (pProduct.tags.some((t: string) => t.toLowerCase() === 'hoodie') || titleUpper.includes('HOODIE')) category = 'hoodies';
+            else if (pProduct.tags.some((t: string) => t.toLowerCase().includes('shirt')) || titleUpper.includes('SHIRT') || titleUpper.includes('TEE')) category = 't-shirts';
+            else if (pProduct.tags.some((t: string) => t.toLowerCase() === 'hat') || titleUpper.includes('HAT') || titleUpper.includes('CAP')) category = 'hats';
+            else category = 'general';
+          } else {
+            category = 'general';
+          }
         }
 
         const existingProduct = await db.query.products.findFirst({

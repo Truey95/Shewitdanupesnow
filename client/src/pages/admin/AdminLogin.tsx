@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Lock, User, ShieldCheck } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -30,6 +31,9 @@ export default function AdminLogin() {
       password: "",
     },
   });
+
+  // Use the admin auth hook
+  const { login } = useAdminAuth();
 
   const onSubmit = async (data: LoginForm) => {
     setIsLoading(true);
@@ -56,16 +60,18 @@ export default function AdminLogin() {
 
       const result = await response.json();
 
-      // Store the admin session
-      localStorage.setItem("adminToken", result.token);
-
       toast({
         title: "Access Granted",
         description: "Welcome back to the command center.",
         className: "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200",
       });
 
-      setLocation("/admin/dashboard");
+      // Use context login function to update global state and redirect
+      login(result.token, {
+        username: data.username,
+        role: "admin"
+      });
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
