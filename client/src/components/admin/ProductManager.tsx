@@ -98,12 +98,12 @@ export default function ProductManager({ shopId }: ProductManagerProps) {
   };
 
   const handleEditProduct = () => {
-    if (productDetails?.data) {
+    if (productDetails) {
       setEditingProduct({
-        id: productDetails.data.id,
-        title: productDetails.data.title,
-        description: productDetails.data.description || '',
-        variants: productDetails.data.variants?.map(variant => ({
+        id: productDetails.id,
+        title: productDetails.title,
+        description: productDetails.description || '',
+        variants: productDetails.variants?.map(variant => ({
           id: variant.id,
           price: variant.price || 0,
           title: (variant as any).title || (variant as any).name || `Variant ${variant.id}`,
@@ -370,17 +370,17 @@ export default function ProductManager({ shopId }: ProductManagerProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {selectedProduct && productDetails?.data ? (
+                {selectedProduct && productDetails ? (
                   <div className="space-y-4">
                     <div>
                       <Label className="text-sm font-medium">Title</Label>
-                      <p className="text-sm text-gray-600">{productDetails.data.title}</p>
+                      <p className="text-sm text-gray-600">{productDetails.title}</p>
                     </div>
 
                     <div>
                       <Label className="text-sm font-medium">Status</Label>
                       <div className="flex items-center space-x-2 mt-1">
-                        {(productDetails.data as any).is_published ? (
+                        {(productDetails as any).is_published ? (
                           <Badge className="bg-green-100 text-green-800">
                             <CheckCircle className="w-3 h-3 mr-1" />
                             Published
@@ -397,14 +397,14 @@ export default function ProductManager({ shopId }: ProductManagerProps) {
                     <div>
                       <Label className="text-sm font-medium">Variants</Label>
                       <div className="space-y-2 mt-2">
-                        {productDetails.data.variants?.slice(0, 3).map((variant: any) => (
+                        {productDetails.variants?.slice(0, 3).map((variant: any) => (
                           <div key={variant.id} className="text-sm">
                             <span className="font-medium">{variant.title}</span>
                             <span className="text-gray-500 ml-2">${variant.price}</span>
                           </div>
                         ))}
                         {productDetails.data.variants?.length > 3 && (
-                          <p className="text-xs text-gray-500">+{productDetails.data.variants.length - 3} more variants</p>
+                          <p className="text-xs text-gray-500">+{productDetails.variants.length - 3} more variants</p>
                         )}
                       </div>
                     </div>
@@ -527,15 +527,15 @@ export default function ProductManager({ shopId }: ProductManagerProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {selectedProduct && productDetails?.data ? (
+              {selectedProduct && productDetails ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
-                      <h3 className="font-medium">{productDetails.data.title}</h3>
-                      <p className="text-sm text-gray-500">Product ID: {productDetails.data.id}</p>
+                      <h3 className="font-medium">{productDetails.title}</h3>
+                      <p className="text-sm text-gray-500">Product ID: {productDetails.id}</p>
                     </div>
                     <div className="flex items-center space-x-4">
-                      {productDetails.data.is_published ? (
+                      {productDetails.is_published ? (
                         <Badge className="bg-green-100 text-green-800">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           Published
@@ -556,7 +556,7 @@ export default function ProductManager({ shopId }: ProductManagerProps) {
                         ) : (
                           <Upload className="w-4 h-4 mr-2" />
                         )}
-                        {productDetails.data.is_published ? 'Republish' : 'Publish'}
+                        {productDetails.is_published ? 'Republish' : 'Publish'}
                       </Button>
                     </div>
                   </div>
