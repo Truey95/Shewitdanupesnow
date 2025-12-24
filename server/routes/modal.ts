@@ -1,5 +1,5 @@
 import express from 'express';
-import { modalService } from '../services/modal';
+import { modalService } from '../services/modal.js';
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.get('/status', async (req, res) => {
 router.post('/process-product', async (req, res) => {
   try {
     const productData = req.body;
-    
+
     if (!productData.productId) {
       return res.status(400).json({
         error: 'Missing product ID',
@@ -33,7 +33,7 @@ router.post('/process-product', async (req, res) => {
     }
 
     const result = await modalService.processProductData(productData);
-    
+
     res.json({
       success: true,
       result,
@@ -52,9 +52,9 @@ router.post('/process-product', async (req, res) => {
 router.post('/validate-product/:productId', async (req, res) => {
   try {
     const { productId } = req.params;
-    
+
     const isValid = await modalService.validateProduct(productId);
-    
+
     res.json({
       success: true,
       productId,
@@ -75,9 +75,9 @@ router.post('/execute/:functionName', async (req, res) => {
   try {
     const { functionName } = req.params;
     const payload = req.body;
-    
+
     const result = await modalService.executeFunction(functionName, payload);
-    
+
     res.json({
       success: true,
       function: functionName,

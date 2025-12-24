@@ -1,5 +1,5 @@
 import express from 'express';
-import { daytonaService } from '../services/daytona';
+import { daytonaService } from '../services/daytona.js';
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.get('/status', async (req, res) => {
 router.get('/workspaces', async (req, res) => {
   try {
     const workspaces = await daytonaService.getWorkspaces();
-    
+
     res.json({
       success: true,
       workspaces,
@@ -43,9 +43,9 @@ router.get('/workspaces', async (req, res) => {
 router.post('/workspaces', async (req, res) => {
   try {
     const workspaceData = req.body;
-    
+
     const result = await daytonaService.createWorkspace(workspaceData);
-    
+
     res.json({
       success: true,
       workspace: result,
@@ -64,7 +64,7 @@ router.post('/workspaces', async (req, res) => {
 router.post('/sync-product', async (req, res) => {
   try {
     const productData = req.body;
-    
+
     if (!productData.productId) {
       return res.status(400).json({
         error: 'Missing product ID',
@@ -73,7 +73,7 @@ router.post('/sync-product', async (req, res) => {
     }
 
     const result = await daytonaService.syncProductData(productData);
-    
+
     res.json({
       success: true,
       result,
@@ -93,9 +93,9 @@ router.post('/deploy/:projectId', async (req, res) => {
   try {
     const { projectId } = req.params;
     const deploymentConfig = req.body;
-    
+
     const result = await daytonaService.deployProject(projectId, deploymentConfig);
-    
+
     res.json({
       success: true,
       deployment: result,

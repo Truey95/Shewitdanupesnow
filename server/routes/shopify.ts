@@ -1,5 +1,5 @@
 import express from 'express';
-import { shopifyHandlers } from '../services/shopify';
+import { shopifyHandlers } from '../services/shopify.js';
 
 const router = express.Router();
 

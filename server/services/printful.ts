@@ -1,4 +1,4 @@
-import type { PrintfulProduct, PrintfulVariant } from './types';
+import type { PrintfulProduct, PrintfulVariant } from './types.js';
 
 export class PrintfulService {
   private apiKey: string | null;
@@ -8,12 +8,12 @@ export class PrintfulService {
   constructor() {
     this.apiKey = process.env.PRINTFUL_API_KEY || null;
     this.isConfigured = !!this.apiKey;
-    
+
     if (!this.isConfigured) {
       console.warn('PRINTFUL_API_KEY environment variable is not set. Printful service will not be available.');
     }
   }
-  
+
   private checkConfiguration() {
     if (!this.isConfigured) {
       throw new Error('Printful service is not properly configured. PRINTFUL_API_KEY is missing.');
@@ -86,7 +86,7 @@ export class PrintfulService {
       console.warn('Cannot check Printful connection: API key is missing');
       return false;
     }
-    
+
     try {
       console.log('Testing Printful API connection...');
       const response = await this.request('/v2/stores');
@@ -106,7 +106,7 @@ export class PrintfulService {
 
   async getProducts(): Promise<PrintfulProduct[]> {
     this.checkConfiguration();
-    
+
     try {
       console.log('Fetching products from Printful...');
       const response = await this.request('/v2/sync/products');

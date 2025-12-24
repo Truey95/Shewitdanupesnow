@@ -2,8 +2,8 @@ import express from 'express';
 import { db } from '@db';
 import { products } from '@db/schema';
 import { eq } from 'drizzle-orm';
-import { modalService } from '../services/modal';
-import { daytonaService } from '../services/daytona';
+import { modalService } from '../services/modal.js';
+import { daytonaService } from '../services/daytona.js';
 
 const router = express.Router();
 

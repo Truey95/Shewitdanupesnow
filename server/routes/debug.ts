@@ -1,5 +1,5 @@
 import express from 'express';
-import { printifyService } from '../services/printify';
+import { printifyService } from '../services/printify.js';
 
 const router = express.Router();
 
@@ -7,15 +7,15 @@ const router = express.Router();
 router.get('/printify/test', async (req, res) => {
   try {
     const shops = await printifyService.getShops();
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Printify connection working',
       shops: shops,
       isConfigured: printifyService.isConfigured
     });
   } catch (error) {
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
       isConfigured: printifyService.isConfigured
     });

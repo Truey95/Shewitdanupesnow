@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { db } from '@db';
 import { orders, orderItems, products } from '@db/schema';
 import { eq, and } from 'drizzle-orm';
-import { printifyService } from './printify';
+import { printifyService } from './printify.js';
 
 export interface CreateOrderRequest {
   customerEmail: string;
@@ -94,7 +94,7 @@ class OrderService {
   async processOrderPayment(orderId: number, paymentId: string, shopId: string) {
     try {
       console.log(`Processing payment for order ${orderId} with payment ID ${paymentId}`);
-      
+
       // Get order details with items
       const orderWithItems = await db.query.orders.findFirst({
         where: eq(orders.id, orderId),
@@ -113,7 +113,7 @@ class OrderService {
 
       // Update payment status
       await db.update(orders)
-        .set({ 
+        .set({
           paymentStatus: 'paid',
           paymentId,
           status: 'processing',
@@ -125,7 +125,7 @@ class OrderService {
 
       // Create Printify order for fulfillment
       const shippingAddr = orderWithItems.shippingAddress as any;
-      
+
       // Validate shipping address
       if (!shippingAddr || !shippingAddr.first_name || !shippingAddr.address1 || !shippingAddr.city) {
         throw new Error('Invalid shipping address data');
@@ -161,7 +161,7 @@ class OrderService {
 
       // Update our order with Printify order ID
       await db.update(orders)
-        .set({ 
+        .set({
           printifyOrderId: printifyOrder.data?.id || printifyOrder.id,
           printifyStatus: printifyOrder.data?.status || printifyOrder.status || 'created',
           updatedAt: new Date()
@@ -173,10 +173,10 @@ class OrderService {
       if (printifyOrderId) {
         try {
           await printifyService.submitOrderForProduction(shopId, printifyOrderId);
-          
+
           // Update status to indicate it's been sent to production
           await db.update(orders)
-            .set({ 
+            .set({
               status: 'processing',
               printifyStatus: 'in_production',
               updatedAt: new Date()
@@ -197,12 +197,12 @@ class OrderService {
     } catch (error) {
       // If Printify order creation fails, mark our order as failed
       await db.update(orders)
-        .set({ 
+        .set({
           status: 'cancelled',
           updatedAt: new Date()
         })
         .where(eq(orders.id, orderId));
-      
+
       console.error('Failed to process order payment:', error);
       throw error;
     }
@@ -233,7 +233,7 @@ class OrderService {
     try {
       // Update price in our database
       await db.update(products)
-        .set({ 
+        .set({
           price: newPrice.toString(),
           printifySyncedAt: new Date(),
           printifySyncStatus: 'syncing'
@@ -245,7 +245,7 @@ class OrderService {
 
       // Update sync status
       await db.update(products)
-        .set({ 
+        .set({
           printifySyncStatus: 'synced',
           printifySyncedAt: new Date()
         })
@@ -255,11 +255,11 @@ class OrderService {
     } catch (error) {
       // Update sync status to failed
       await db.update(products)
-        .set({ 
+        .set({
           printifySyncStatus: 'failed'
         })
         .where(eq(products.id, productId));
-      
+
       console.error('Failed to sync product price:', error);
       throw error;
     }
@@ -320,20 +320,20 @@ export const orderHandlers = {
   createOrder: async (req: Request, res: Response) => {
     try {
       const orderData: CreateOrderRequest = req.body;
-      
+
       // Validate required fields
       if (!orderData.customerEmail || !orderData.customerName || !orderData.shippingAddress || !orderData.items || !Array.isArray(orderData.items)) {
-        return res.status(400).json({ 
-          error: 'Missing required fields', 
-          message: 'customerEmail, customerName, shippingAddress, and items are required' 
+        return res.status(400).json({
+          error: 'Missing required fields',
+          message: 'customerEmail, customerName, shippingAddress, and items are required'
         });
       }
 
       // Validate numeric fields
       if (typeof orderData.subtotal !== 'number' || typeof orderData.shipping !== 'number' || typeof orderData.total !== 'number') {
-        return res.status(400).json({ 
-          error: 'Invalid numeric fields', 
-          message: 'subtotal, shipping, and total must be numbers' 
+        return res.status(400).json({
+          error: 'Invalid numeric fields',
+          message: 'subtotal, shipping, and total must be numbers'
         });
       }
 
@@ -341,9 +341,9 @@ export const orderHandlers = {
       res.json(result);
     } catch (error) {
       console.error('Failed to create order:', error);
-      res.status(500).json({ 
-        error: 'Failed to create order', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
+      res.status(500).json({
+        error: 'Failed to create order',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
@@ -352,19 +352,19 @@ export const orderHandlers = {
     try {
       const { orderId } = req.params;
       const { paymentId, shopId } = req.body;
-      
+
       const result = await orderService.processOrderPayment(
-        parseInt(orderId), 
-        paymentId, 
+        parseInt(orderId),
+        paymentId,
         shopId
       );
-      
+
       res.json(result);
     } catch (error) {
       console.error('Failed to process payment:', error);
-      res.status(500).json({ 
-        error: 'Failed to process payment', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
+      res.status(500).json({
+        error: 'Failed to process payment',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
@@ -373,14 +373,14 @@ export const orderHandlers = {
     try {
       const { shopId } = req.params;
       const orderData = req.body;
-      
+
       const shippingOptions = await orderService.calculateShipping(shopId, orderData);
       res.json(shippingOptions);
     } catch (error) {
       console.error('Failed to calculate shipping:', error);
-      res.status(500).json({ 
-        error: 'Failed to calculate shipping', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
+      res.status(500).json({
+        error: 'Failed to calculate shipping',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
@@ -389,20 +389,20 @@ export const orderHandlers = {
     try {
       const { productId } = req.params;
       const { price, shopId, printifyProductId } = req.body;
-      
+
       const result = await orderService.syncProductPrice(
         parseInt(productId),
         parseFloat(price),
         shopId,
         printifyProductId
       );
-      
+
       res.json(result);
     } catch (error) {
       console.error('Failed to sync product price:', error);
-      res.status(500).json({ 
-        error: 'Failed to sync product price', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
+      res.status(500).json({
+        error: 'Failed to sync product price',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
@@ -414,9 +414,9 @@ export const orderHandlers = {
       res.json(order);
     } catch (error) {
       console.error('Failed to get order status:', error);
-      res.status(500).json({ 
-        error: 'Failed to get order status', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
+      res.status(500).json({
+        error: 'Failed to get order status',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   },
@@ -425,14 +425,14 @@ export const orderHandlers = {
     try {
       const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
-      
+
       const orders = await orderService.getAllOrders(limit, offset);
       res.json(orders);
     } catch (error) {
       console.error('Failed to get orders:', error);
-      res.status(500).json({ 
-        error: 'Failed to get orders', 
-        message: error instanceof Error ? error.message : 'Unknown error' 
+      res.status(500).json({
+        error: 'Failed to get orders',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   }

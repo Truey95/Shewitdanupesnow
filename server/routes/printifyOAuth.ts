@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { oauthHandlers, webhookHandlers } from '../services/printifyOAuth';
+import { oauthHandlers, webhookHandlers } from '../services/printifyOAuth.js';
 
 const router = Router();
 

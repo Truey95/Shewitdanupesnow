@@ -3,58 +3,58 @@ import { createServer, type Server } from "http";
 import { db } from "@db";
 import { products, productSizes, printfulSyncLogs } from "@db/schema";
 import { eq } from "drizzle-orm";
-import { printfulService } from "./services/printful";
-import printifyRouter from "./routes/printify";
-import printifyOAuthRouter from "./routes/printifyOAuth";
-import shopifyRouter from "./routes/shopify";
-import adminRouter from "./routes/admin";
-import tryOnRouter from "./routes/try-on";
-import productsRouter from "./routes/products";
-import ordersRouter from "./routes/orders";
-import debugRouter from "./routes/debug";
-import apiStatusRouter from "./routes/api-status";
-import modalRouter from "./routes/modal";
-import daytonaRouter from "./routes/daytona";
-import eventsRouter from "./routes/events";
-import uploadRouter from "./routes/upload";
+import { printfulService } from "./services/printful.js";
+import printifyRouter from "./routes/printify.js";
+import printifyOAuthRouter from "./routes/printifyOAuth.js";
+import shopifyRouter from "./routes/shopify.js";
+import adminRouter from "./routes/admin.js";
+import tryOnRouter from "./routes/try-on.js";
+import productsRouter from "./routes/products.js";
+import ordersRouter from "./routes/orders.js";
+import debugRouter from "./routes/debug.js";
+import apiStatusRouter from "./routes/api-status.js";
+import modalRouter from "./routes/modal.js";
+import daytonaRouter from "./routes/daytona.js";
+import eventsRouter from "./routes/events.js";
+import uploadRouter from "./routes/upload.js";
 
 export function registerRoutes(app: Express): Server {
   // Add API Status routes
   app.use('/api/status', apiStatusRouter);
-  
+
   // Add Printify routes
   app.use('/api/printify', printifyRouter);
-  
+
   // Add Printify OAuth and Webhook routes
   app.use('/api/printify', printifyOAuthRouter);
-  
+
   // Add Shopify routes
   app.use('/api/shopify', shopifyRouter);
-  
+
   // Add Admin routes
   app.use('/api/admin', adminRouter);
-  
+
   // Add Products routes
   app.use('/api/products', productsRouter);
-  
+
   // Add Orders routes  
   app.use('/api/orders', ordersRouter);
-  
+
   // Add Modal API routes
   app.use('/api/modal', modalRouter);
-  
+
   // Add Daytona API routes
   app.use('/api/daytona', daytonaRouter);
-  
+
   // Add Events routes
   app.use('/api/events', eventsRouter);
-  
+
   // Add Upload routes
   app.use('/api/upload', uploadRouter);
-  
+
   // Add Debug routes
   app.use('/api/debug', debugRouter);
-  
+
   // Add Try-On route
   app.use(tryOnRouter);
 
@@ -62,12 +62,12 @@ export function registerRoutes(app: Express): Server {
   app.get("/api/printful/test", async (_req, res) => {
     if (!printfulService.isConfigured) {
       console.warn('Printful API is not configured. Cannot test connection.');
-      return res.status(503).json({ 
-        status: "error", 
+      return res.status(503).json({
+        status: "error",
         message: "Printful API is not configured. Please add PRINTFUL_API_KEY to the environment variables."
       });
     }
-    
+
     try {
       const isConnected = await printfulService.checkConnection();
       if (isConnected) {
@@ -84,12 +84,12 @@ export function registerRoutes(app: Express): Server {
   app.post("/api/printful/sync", async (_req, res) => {
     if (!printfulService.isConfigured) {
       console.warn('Printful API is not configured. Cannot sync products.');
-      return res.status(503).json({ 
-        status: "error", 
+      return res.status(503).json({
+        status: "error",
         message: "Printful API is not configured. Please add PRINTFUL_API_KEY to the environment variables."
       });
     }
-    
+
     try {
       console.log('Starting Printful product sync...');
       const printfulProducts = await printfulService.getProducts();
@@ -124,7 +124,7 @@ export function registerRoutes(app: Express): Server {
             const newProduct = await db.insert(products).values({
               name: printfulProduct.name,
               description: printfulProduct.name,
-              price: price.toString(), 
+              price: price.toString(),
               imageUrl: printfulProduct.thumbnail_url || 'placeholder',
               category: 'imported',
               printfulProductId: printfulProduct.id,
@@ -169,7 +169,7 @@ export function registerRoutes(app: Express): Server {
         }
       }
 
-      res.json({ 
+      res.json({
         message: "Products sync completed",
         stats: {
           total: printfulProducts.length,
@@ -185,7 +185,7 @@ export function registerRoutes(app: Express): Server {
           stack: error.stack
         } : 'Unknown error'
       });
-      res.status(500).json({ 
+      res.status(500).json({
         message: "Failed to sync products",
         error: error instanceof Error ? error.message : 'Unknown error'
       });

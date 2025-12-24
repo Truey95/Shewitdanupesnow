@@ -1,6 +1,6 @@
 import express from 'express';
-import { printifyService } from '../services/printify';
-import { shopifyService } from '../services/shopify';
+import { printifyService } from '../services/printify.js';
+import { shopifyService } from '../services/shopify.js';
 
 const router = express.Router();
 
@@ -68,7 +68,7 @@ router.post('/sync-all-products', async (req, res) => {
 
   try {
     const { shopId } = req.body;
-    
+
     if (!shopId) {
       return res.status(400).json({
         error: 'Missing shopId',
@@ -77,7 +77,7 @@ router.post('/sync-all-products', async (req, res) => {
     }
 
     console.log(`Starting bulk sync for shop ${shopId}...`);
-    
+
     // Get all products from Printify
     const products = await printifyService.getProducts(shopId);
     console.log(`Found ${products.data.length} products in Printify shop`);
@@ -143,11 +143,11 @@ router.get('/test-printify', async (req, res) => {
 
   try {
     const shops = await printifyService.getShops();
-    
+
     if (shops.length > 0) {
       const shopId = shops[0].id;
       const products = await printifyService.getProducts(shopId.toString());
-      
+
       res.json({
         success: true,
         message: 'Printify API is working in live mode',

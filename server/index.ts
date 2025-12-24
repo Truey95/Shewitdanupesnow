@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./register-routes";
-import { setupVite, serveStatic, log } from "./vite";
-import tryOnRouter from "./routes/try-on";
+import { registerRoutes } from "./register-routes.js";
+import { setupVite, serveStatic, log } from "./vite.js";
+import tryOnRouter from "./routes/try-on.js";
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));  // Increased limit for image uploads

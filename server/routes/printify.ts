@@ -1,6 +1,6 @@
 import express from 'express';
-import { printifyHandlers } from '../services/printify';
-import { orderHandlers } from '../services/orderService';
+import { printifyHandlers } from '../services/printify.js';
+import { orderHandlers } from '../services/orderService.js';
 
 const router = express.Router();
 
