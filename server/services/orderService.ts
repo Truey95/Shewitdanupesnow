@@ -49,7 +49,7 @@ class OrderService {
   async createOrder(orderData: CreateOrderRequest) {
     try {
       // Start a transaction to ensure data consistency
-      const result = await db.transaction(async (tx) => {
+      const result = await db.transaction(async (tx: any) => {
         // Create order in our database
         const [order] = await tx.insert(orders).values({
           customerEmail: orderData.customerEmail,
