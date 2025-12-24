@@ -21,6 +21,7 @@ export interface PrintifyProduct {
   print_provider_id?: number;
   print_areas?: Record<string, PrintifyPrintArea>;
   options?: PrintifyProductOption[];
+  tags?: string[];
 }
 
 export interface PrintifyPrintArea {
