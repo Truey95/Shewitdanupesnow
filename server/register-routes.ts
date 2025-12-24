@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { db } from "@db";
-import { products, productSizes, printfulSyncLogs } from "@db/schema";
+import { db } from "../db/index.js";
+import { products, productSizes, printfulSyncLogs } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 import { printfulService } from "./services/printful.js";
 import printifyRouter from "./routes/printify.js";

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { db } from '@db';
-import { orders, orderItems, products } from '@db/schema';
+import { db } from '../../db/index.js';
+import { orders, orderItems, products } from '../../db/schema.js';
 import { eq, and } from 'drizzle-orm';
 import { printifyService } from './printify.js';
 

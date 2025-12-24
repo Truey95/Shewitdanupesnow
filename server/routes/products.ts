@@ -1,6 +1,6 @@
 import express from 'express';
-import { db } from '@db';
-import { products } from '@db/schema';
+import { db } from '../../db/index.js';
+import { products } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
 import { modalService } from '../services/modal.js';
 import { daytonaService } from '../services/daytona.js';
