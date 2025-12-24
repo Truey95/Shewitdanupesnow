@@ -213,7 +213,7 @@ export default function Products() {
                         // Quick add the first enabled variant to cart
                         if (product.variants && product.variants.length > 0) {
                           const enabledVariant = product.variants.find(v => v.is_enabled) || product.variants[0];
-                          const size = enabledVariant.options?.size || 'One Size';
+                          const size = (enabledVariant.options as any)?.size || 'One Size';
 
                           addToCart({
                             id: typeof product.id === 'string' ? parseInt(product.id) : 9999,
