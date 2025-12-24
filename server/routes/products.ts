@@ -74,7 +74,7 @@ router.put('/:productId/update', async (req, res) => {
     }
 
     // Import services
-    const { printifyService } = await import('../services/printify');
+    const { printifyService } = await import('../services/printify.js');
 
     // Update product in Printify (title, description) - with guaranteed response
     if (title || description) {
@@ -567,7 +567,7 @@ router.post('/sync-all', async (req, res) => {
     console.log(`[ProductSync] Starting full sync for shop ${shopId}`);
 
     // Import printifyService
-    const { printifyService } = await import('../services/printify');
+    const { printifyService } = await import('../services/printify.js');
 
     // Fetch all products from Printify
     const response = await printifyService.getProducts(shopId);
