@@ -134,7 +134,7 @@ class OrderService {
       const printifyOrderData = {
         external_id: `ORDER-${orderId}`,
         label: `Order #${orderId}`,
-        line_items: orderWithItems.items.map(item => ({
+        line_items: orderWithItems.items.map((item: any) => ({
           product_id: item.printifyProductId,
           variant_id: item.printifyVariantId,
           quantity: item.quantity
