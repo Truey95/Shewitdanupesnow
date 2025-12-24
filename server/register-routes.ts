@@ -58,6 +58,15 @@ export function registerRoutes(app: Express): Server {
   // Add Try-On route
   app.use(tryOnRouter);
 
+  // Add explicit environment check route
+  app.get("/api/env-check", (_req, res) => {
+    const dbUrl = process.env.DATABASE_URL;
+    res.json({
+      databaseUrlExists: !!dbUrl,
+      message: dbUrl ? "Database URL is set" : "WARNING: DATABASE_URL is missing"
+    });
+  });
+
   // Add a test endpoint to verify Printful connection
   app.get("/api/printful/test", async (_req, res) => {
     if (!printfulService.isConfigured) {

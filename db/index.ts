@@ -16,6 +16,6 @@ if (typeof globalThis !== 'undefined') {
 // Create the database connection safely
 export const db = process.env.DATABASE_URL
   ? drizzle(new Pool({ connectionString: process.env.DATABASE_URL }), { schema })
-  : new Proxy({} as ReturnType<typeof drizzle>, {
+  : (new Proxy({}, {
     get: () => { throw new Error("DATABASE_URL is not set. Cannot access database."); }
-  });
+  }) as any);
