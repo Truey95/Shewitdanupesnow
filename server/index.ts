@@ -21,7 +21,8 @@ app.use(tryOnRouter);
 
 // API error handling middleware
 app.use("/api", (err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('API Error:', err);
+  console.error('API Error Stack:', err.stack); // Log full stack trace
+  console.error('API Error Message:', err.message);
   const status = err.status || err.statusCode || 500;
   const message = err.message || "Internal Server Error";
   res.status(status).json({ message });
@@ -45,7 +46,7 @@ const startServer = async () => {
 
 // Only run header logic if not in Vercel environment (Vercel sets VERCEL=1)
 if (process.env.VERCEL !== "1") {
-   startServer().catch(console.error);
+  startServer().catch(console.error);
 }
 
 export default app;

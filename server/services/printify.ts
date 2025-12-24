@@ -184,7 +184,35 @@ class PrintifyService {
 
   async getShops() {
     this.checkConfiguration();
-    return this.request('/shops.json');
+    console.log("[PrintifyService] getShops called. DEBUGGING START");
+    console.log("[PrintifyService] KEY EXISTS:", !!process.env.PRINTIFY_API_KEY);
+
+    // Use direct fetch for debugging to strip away any class-level abstractions temporarily
+    try {
+      const url = `${PRINTIFY_API_URL}/shops.json`;
+      console.log(`[PrintifyService] Fetching: ${url}`);
+
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          'User-Agent': this.appName
+        }
+      });
+
+      console.log("[PrintifyService] STATUS:", res.status);
+      const text = await res.text(); // Capture raw text first
+      console.log("[PrintifyService] RAW RESPONSE:", text.substring(0, 500)); // Log first 500 chars
+
+      if (!res.ok) {
+        throw new Error(`Printify API Error (${res.status}): ${text}`);
+      }
+
+      return JSON.parse(text);
+    } catch (err) {
+      console.error("[PrintifyService] SERVER ERROR:", err);
+      throw err;
+    }
   }
 
   async getProducts(shopId: string) {
