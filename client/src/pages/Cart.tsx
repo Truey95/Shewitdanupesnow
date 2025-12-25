@@ -4,12 +4,10 @@ import CartItem from "@/components/CartItem";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { CheckoutForm } from "@/components/CheckoutForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Link } from "wouter";
 
 export default function Cart() {
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [showCheckout, setShowCheckout] = useState(false);
   const { toast } = useToast();
   const cart = useCart();
 
@@ -17,13 +15,7 @@ export default function Cart() {
   const shipping = subtotal > 100 ? 0 : 9.99;
   const total = subtotal + shipping;
 
-  const handleCheckoutComplete = () => {
-    setShowCheckout(false);
-    toast({
-      title: "Order placed successfully!",
-      description: "Thank you for your purchase. You'll receive a confirmation email shortly.",
-    });
-  };
+
 
   if (cart.length === 0) {
     return (
@@ -58,7 +50,7 @@ export default function Cart() {
         <div className="lg:col-span-1">
           <div className="bg-gray-50 p-6 rounded-lg">
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-            
+
             <div className="space-y-2 mb-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
@@ -75,25 +67,11 @@ export default function Cart() {
               </div>
             </div>
 
-            <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
-              <DialogTrigger asChild>
-                <Button className="w-full">
-                  Checkout
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Complete Your Order</DialogTitle>
-                </DialogHeader>
-                <CheckoutForm 
-                  cartItems={cart}
-                  subtotal={subtotal}
-                  shipping={shipping}
-                  total={total}
-                  onComplete={handleCheckoutComplete}
-                />
-              </DialogContent>
-            </Dialog>
+            <Link href="/checkout">
+              <Button className="w-full">
+                Proceed to Checkout
+              </Button>
+            </Link>
 
             <p className="text-sm text-muted-foreground mt-4">
               Free shipping on orders over $100
