@@ -11,7 +11,7 @@ router.get("/", async (_req, res) => {
   try {
     const allEvents = await db.query.events.findMany({
       where: eq(events.isActive, true),
-      orderBy: (events, { desc }) => [desc(events.featured), desc(events.startDate)],
+      orderBy: (events: any, { desc }: any) => [desc(events.featured), desc(events.startDate)],
     });
     res.json(allEvents);
   } catch (error) {
@@ -153,7 +153,7 @@ router.delete("/:id", requireAdmin, async (req, res) => {
 router.get("/admin/all", requireAdmin, async (_req, res) => {
   try {
     const allEvents = await db.query.events.findMany({
-      orderBy: (events, { desc }) => [desc(events.createdAt)],
+      orderBy: (events: any, { desc }: any) => [desc(events.createdAt)],
       with: {
         registrations: true,
       },
