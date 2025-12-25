@@ -47,14 +47,26 @@ router.get('/:id', async (req, res) => {
       return res.status(503).json({ error: "Database not configured" });
     }
 
-    const { data: product, error } = await supabase
-      .from('products')
-      .select('*, sizes(*)')
-      .eq('id', req.params.id)
-      .single();
+    let query = supabase.from('products').select('*, sizes(*)');
+
+    // Check if it's a numeric ID
+    const numericId = parseInt(req.params.id);
+    if (!isNaN(numericId)) {
+      query = query.eq('id', numericId);
+    } else {
+      // If not numeric, try looking up by printify_product_id
+      query = query.eq('printify_product_id', req.params.id);
+    }
+
+    const { data: product, error } = await query.single();
+
+    if (error) {
+      console.error(`[ProductDetail] Error fetching product ${req.params.id}:`, error);
+    }
 
     if (error || !product) {
-      return res.status(404).json({ message: "Product not found" });
+      console.log(`[ProductDetail] Product ${req.params.id} not found. Product:`, product, 'Error:', error);
+      return res.status(404).json({ message: "Product not found", error: error, requestedId: req.params.id });
     }
 
     // Map to camelCase

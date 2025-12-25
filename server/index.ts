@@ -1,4 +1,4 @@
-import "./env-loader.js";
+import "./env-loader.js"; // Force reload 2
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./register-routes.js";
 import { setupVite, serveStatic, log } from "./vite.js";
