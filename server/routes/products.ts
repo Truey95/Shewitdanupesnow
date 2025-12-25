@@ -1,5 +1,5 @@
 import express from 'express';
-import { supabase } from '../services/supabase.js';
+import { getSupabase } from '../services/supabase.js';
 import { modalService } from '../services/modal.js';
 import { daytonaService } from '../services/daytona.js';
 
@@ -8,6 +8,11 @@ const router = express.Router();
 // Get all products
 router.get('/', async (_req, res) => {
   try {
+    const supabase = getSupabase();
+    if (!supabase) {
+      return res.status(503).json({ error: "Database not configured" });
+    }
+
     const { data: allProducts, error } = await supabase
       .from('products')
       .select('*, sizes(*)');
@@ -37,6 +42,11 @@ router.get('/', async (_req, res) => {
 // Get product by ID
 router.get('/:id', async (req, res) => {
   try {
+    const supabase = getSupabase();
+    if (!supabase) {
+      return res.status(503).json({ error: "Database not configured" });
+    }
+
     const { data: product, error } = await supabase
       .from('products')
       .select('*, sizes(*)')
@@ -124,6 +134,11 @@ router.put('/:productId/update', async (req, res) => {
       }
     }
 
+    const supabase = getSupabase();
+    if (!supabase) {
+      return res.status(503).json({ error: "Database not configured" });
+    }
+
     // Update local database (Supabase)
     const { data: existingProduct } = await supabase
       .from('products')
@@ -188,6 +203,11 @@ router.put('/:productId/category', async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    const supabase = getSupabase();
+    if (!supabase) {
+      return res.status(503).json({ error: "Database not configured" });
+    }
+
     const { data: existingProduct } = await supabase
       .from('products')
       .select('*')
@@ -234,6 +254,11 @@ router.put('/:productId/category', async (req, res) => {
 router.get('/category/:category', async (req, res) => {
   try {
     const { category } = req.params;
+    const supabase = getSupabase();
+    if (!supabase) {
+      return res.status(503).json({ error: "Database not configured" });
+    }
+
     const { data: categoryProducts, error } = await supabase
       .from('products')
       .select('*')
@@ -308,6 +333,11 @@ router.post('/sync-all', async (req, res) => {
           } else {
             category = 'general';
           }
+        }
+
+        const supabase = getSupabase();
+        if (!supabase) {
+          throw new Error("Database not configured");
         }
 
         const { data: existingProduct } = await supabase
