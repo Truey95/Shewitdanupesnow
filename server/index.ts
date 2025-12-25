@@ -1,3 +1,4 @@
+import "./env-loader.js";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./register-routes.js";
 import { setupVite, serveStatic, log } from "./vite.js";
@@ -38,7 +39,7 @@ const startServer = async () => {
     serveStatic(app);
   }
 
-  const PORT = 5000;
+  const PORT = 5001;
   server.listen(PORT, "0.0.0.0", () => {
     log(`serving on port ${PORT}`);
   });

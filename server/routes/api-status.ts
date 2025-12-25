@@ -89,7 +89,7 @@ router.post('/sync-all-products', async (req, res) => {
     for (const product of products.data) {
       try {
         // Sync product to database
-        const syncResponse = await fetch(`http://localhost:5000/api/products/${product.id}/sync`, {
+        const syncResponse = await fetch(`http://localhost:5001/api/products/${product.id}/sync`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
