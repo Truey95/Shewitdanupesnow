@@ -17,6 +17,7 @@ export interface PrintifyProduct {
   updated_at: string;
   visible: boolean;
   is_locked: boolean;
+  is_published?: boolean;
   blueprint_id?: number;
   print_provider_id?: number;
   print_areas?: Record<string, PrintifyPrintArea>;
