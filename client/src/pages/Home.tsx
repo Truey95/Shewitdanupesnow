@@ -13,7 +13,7 @@ export default function Home() {
             <Link href="/collections/swdnn" className="col-span-6 row-span-2">
               <div className="relative h-full group cursor-pointer overflow-hidden">
                 <img
-                  src="/images/swdnn-collection.jpg"
+                  src="/swdnn-feature.jpg"
                   alt="SWDNN Collection"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
