@@ -18,12 +18,13 @@ export default function ProductDetail() {
   const [, navigate] = useLocation();
   const [selectedSize, setSelectedSize] = useState("");
   const [printifyProductId, setPrintifyProductId] = useState<string>("");
+  const [dbShopId, setDbShopId] = useState<string>("");
   const { toast } = useToast();
-  
+
   // Get the first shop ID
   const { data: shops, isLoading: isLoadingShops, error: shopsError } = usePrintifyShops();
   const shopId = shops && shops.length > 0 ? shops[0]?.id?.toString() : "";
-  
+
   // Check if ID is a local database ID or Printify ID, and get the Printify ID
   useEffect(() => {
     const checkProductId = async () => {
@@ -31,7 +32,7 @@ export default function ProductDetail() {
         console.log('[ProductDetail] No product ID provided');
         return;
       }
-      
+
       // If ID looks like a Printify ID (long hex string), use it directly
       if (id.length > 10 && /^[a-f0-9]+$/.test(id)) {
         setPrintifyProductId(id);
@@ -39,15 +40,19 @@ export default function ProductDetail() {
         // Otherwise, it's a local database ID - fetch the Printify ID
         try {
           const response = await fetch(`/api/products/${id}`);
-          
+
           if (response.ok) {
             const product = await response.json();
-            
+
             // Check both possible field names for compatibility
             const printifyId = product.printifyProductId || product.printify_product_id;
-            
+            const printifyShopId = product.printifyShopId || product.printify_shop_id;
+
             if (printifyId) {
               setPrintifyProductId(printifyId);
+              if (printifyShopId) {
+                setDbShopId(printifyShopId);
+              }
             } else {
               throw new Error('No Printify product ID found');
             }
@@ -64,16 +69,19 @@ export default function ProductDetail() {
         }
       }
     };
-    
+
     checkProductId();
   }, [id, toast, navigate]);
-  
+
+  // Use the shop ID from the database if available, otherwise fallback to the first shop
+  const activeShopId = dbShopId || shopId;
+
   // Get the product data from the Printify API
   const { data: productData, isLoading: isLoadingProduct, error: productError } = usePrintifyProduct(
-    shopId, 
+    activeShopId,
     printifyProductId
   );
-  
+
   const product = productData;
   const isLoading = isLoadingShops || isLoadingProduct || !printifyProductId;
   const error = shopsError || productError;
@@ -104,7 +112,7 @@ export default function ProductDetail() {
         }
       }
     });
-    
+
     return Array.from(sizes).map(size => ({
       size,
       inStock: 1 // We're assuming all enabled variants are in stock
@@ -149,23 +157,23 @@ export default function ProductDetail() {
   if (!product) {
     // Try to find a sample product with the matching ID
     const sampleProduct = sampleProducts.find(p => p.id === id);
-    
+
     // If we found a sample product, use it instead
     if (sampleProduct) {
       return renderProductDetails(sampleProduct);
     }
-    
+
     // If no sample product matches, show the not found message
     return (
       <div className="container mx-auto py-8">
         {/* API Configuration Alert */}
         <ApiConfigAlert />
-        
+
         <div className="text-center mt-8">
           <h2 className="text-2xl font-bold">Product not found</h2>
           <p className="mt-2">We couldn't find the product you're looking for.</p>
-          <Button 
-            className="mt-4" 
+          <Button
+            className="mt-4"
             onClick={() => navigate("/products")}
           >
             Back to Products
@@ -185,7 +193,7 @@ export default function ProductDetail() {
       <div className="container mx-auto py-8">
         {/* API Configuration Alert */}
         <ApiConfigAlert />
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
           <div className="aspect-square">
             <img
@@ -248,7 +256,7 @@ export default function ProductDetail() {
                   }
 
                   addToCart({
-                    id: typeof productToRender.id === 'string' ? parseInt(productToRender.id) : 9999,
+                    id: productToRender.id,
                     name: productToRender.title,
                     price: getPrice(productToRender.variants), // Already converted to dollars
                     size: selectedSize,
@@ -266,7 +274,7 @@ export default function ProductDetail() {
               >
                 Add to Cart
               </Button>
-              
+
               <Button
                 size="lg"
                 className="flex-1"
@@ -281,7 +289,7 @@ export default function ProductDetail() {
 
                   // Add to cart and then navigate to checkout
                   addToCart({
-                    id: typeof productToRender.id === 'string' ? parseInt(productToRender.id) : 9999,
+                    id: productToRender.id,
                     name: productToRender.title,
                     price: getPrice(productToRender.variants), // Already converted to dollars
                     size: selectedSize,
@@ -297,7 +305,7 @@ export default function ProductDetail() {
                 Buy Now
               </Button>
             </div>
-            
+
 
             <div className="prose prose-sm">
               <h3>Product Details</h3>

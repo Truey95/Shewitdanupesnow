@@ -108,7 +108,7 @@ export function CheckoutForm({ cartItems, subtotal, shipping, total, onComplete 
     mutationFn: async ({ orderId, paymentData }: { orderId: number; paymentData: any }) => {
       // Generate payment ID for tracking
       const paymentId = `pay_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       const response = await fetch(`/api/printify/orders/${orderId}/process-payment`, {
         method: 'POST',
         headers: {
@@ -143,7 +143,7 @@ export function CheckoutForm({ cartItems, subtotal, shipping, total, onComplete 
     try {
       // Convert cart items to order format with proper validation
       const orderItems = cartItems.map(item => ({
-        productId: typeof item.id === 'string' ? parseInt(item.id) : item.id,
+        productId: item.id,
         printifyProductId: `${item.id}`,
         printifyVariantId: item.variantId || `${item.id}_${item.size}`,
         name: item.name,
@@ -197,7 +197,7 @@ export function CheckoutForm({ cartItems, subtotal, shipping, total, onComplete 
       // Clear cart and complete checkout
       localStorage.removeItem('cart');
       window.dispatchEvent(new Event('cart-updated'));
-      
+
       toast({
         title: "Order Placed Successfully!",
         description: `Order #${orderResult.order.id} has been submitted to Printify for fulfillment.`,
@@ -469,9 +469,9 @@ export function CheckoutForm({ cartItems, subtotal, shipping, total, onComplete 
           </CardContent>
         </Card>
 
-        <Button 
-          type="submit" 
-          className="w-full" 
+        <Button
+          type="submit"
+          className="w-full"
           disabled={isProcessing}
         >
           {isProcessing ? "Processing..." : `Place Order - $${total.toFixed(2)}`}

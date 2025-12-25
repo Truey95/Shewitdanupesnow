@@ -216,7 +216,7 @@ export default function Products() {
                           const size = (enabledVariant.options as any)?.size || 'One Size';
 
                           addToCart({
-                            id: typeof product.id === 'string' ? parseInt(product.id) : 9999,
+                            id: product.id,
                             name: product.title,
                             price: enabledVariant.price / 100, // Convert cents to dollars
                             size: size,

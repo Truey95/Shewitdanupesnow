@@ -29,7 +29,7 @@ export interface CreateOrderRequest {
     zip: string;
   };
   items: Array<{
-    productId: number;
+    productId: number | string;
     printifyProductId: string;
     printifyVariantId: string;
     name: string;
@@ -65,22 +65,52 @@ class OrderService {
           paymentStatus: 'pending'
         }).returning();
 
-        // Create order items
-        const orderItemsData = orderData.items.map(item => ({
-          orderId: order.id,
-          productId: item.productId,
-          printifyProductId: item.printifyProductId,
-          printifyVariantId: item.printifyVariantId,
-          name: item.name,
-          size: item.size,
-          price: item.price.toString(),
-          quantity: item.quantity,
-          imageUrl: item.imageUrl
-        }));
+        // Process items and resolve product IDs
+        const processesItems = [];
+        for (const item of orderData.items) {
+          let dbProductId: number;
 
-        await tx.insert(orderItems).values(orderItemsData);
+          if (typeof item.productId === 'number') {
+            dbProductId = item.productId;
+          } else {
+            // It's a string ID (Printify ID), check if we have it in DB
+            const existingProduct = await tx.query.products.findFirst({
+              where: eq(products.printifyProductId, item.productId)
+            });
 
-        return { order, items: orderItemsData };
+            if (existingProduct) {
+              dbProductId = existingProduct.id;
+            } else {
+              // Create a new local product record
+              const [newProduct] = await tx.insert(products).values({
+                name: item.name,
+                description: 'Auto-created from order',
+                price: item.price.toString(),
+                imageUrl: item.imageUrl || '',
+                category: 'auto-created',
+                printifyProductId: item.productId,
+                isActive: true
+              }).returning();
+              dbProductId = newProduct.id;
+            }
+          }
+
+          processesItems.push({
+            orderId: order.id,
+            productId: dbProductId,
+            printifyProductId: item.printifyProductId,
+            printifyVariantId: item.printifyVariantId,
+            name: item.name,
+            size: item.size,
+            price: item.price.toString(),
+            quantity: item.quantity,
+            imageUrl: item.imageUrl
+          });
+        }
+
+        await tx.insert(orderItems).values(processesItems);
+
+        return { order, items: processesItems };
       });
 
       return result;
