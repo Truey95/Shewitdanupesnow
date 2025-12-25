@@ -13,7 +13,21 @@ router.get('/', async (_req, res) => {
       .select('*, sizes(*)');
 
     if (error) throw error;
-    res.json(allProducts);
+
+    // Map to camelCase for frontend
+    const mappedProducts = (allProducts || []).map(p => ({
+      ...p,
+      imageUrl: p.image_url,
+      isActive: p.is_active,
+      printifyProductId: p.printify_product_id,
+      printifyShopId: p.printify_shop_id,
+      printifyData: p.printify_data,
+      printifySyncedAt: p.printify_synced_at,
+      printifySyncStatus: p.printify_sync_status,
+      createdAt: p.created_at
+    }));
+
+    res.json(mappedProducts);
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({ message: "Failed to fetch products" });
@@ -33,7 +47,20 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    res.json(product);
+    // Map to camelCase
+    const mappedProduct = {
+      ...product,
+      imageUrl: product.image_url,
+      isActive: product.is_active,
+      printifyProductId: product.printify_product_id,
+      printifyShopId: product.printify_shop_id,
+      printifyData: product.printify_data,
+      printifySyncedAt: product.printify_synced_at,
+      printifySyncStatus: product.printify_sync_status,
+      createdAt: product.created_at
+    };
+
+    res.json(mappedProduct);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch product" });
   }
@@ -215,11 +242,24 @@ router.get('/category/:category', async (req, res) => {
 
     if (error) throw error;
 
+    // Map to camelCase
+    const mappedProducts = (categoryProducts || []).map(p => ({
+      ...p,
+      imageUrl: p.image_url,
+      isActive: p.is_active,
+      printifyProductId: p.printify_product_id,
+      printifyShopId: p.printify_shop_id,
+      printifyData: p.printify_data,
+      printifySyncedAt: p.printify_synced_at,
+      printifySyncStatus: p.printify_sync_status,
+      createdAt: p.created_at
+    }));
+
     res.json({
       success: true,
-      data: categoryProducts,
+      data: mappedProducts,
       category,
-      count: categoryProducts?.length || 0
+      count: mappedProducts.length
     });
   } catch (error) {
     console.error('Failed to get products by category:', error);
