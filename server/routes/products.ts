@@ -579,6 +579,7 @@ router.post('/sync-all', async (req, res) => {
 
     let syncedCount = 0;
     let errorCount = 0;
+    const errors: any[] = [];
 
     for (const pProduct of printifyProducts) {
       try {
@@ -621,8 +622,8 @@ router.post('/sync-all', async (req, res) => {
 
         if (existingProduct) {
           await db.update(products).set({
-            name: pProduct.title,
-            description: pProduct.description,
+            name: pProduct.title || 'Untitled Product',
+            description: pProduct.description || '',
             price: price,
             imageUrl: imageUrl || existingProduct.imageUrl,
             printifyShopId: shopId,
@@ -633,8 +634,8 @@ router.post('/sync-all', async (req, res) => {
           }).where(eq(products.id, existingProduct.id));
         } else {
           await db.insert(products).values({
-            name: pProduct.title,
-            description: pProduct.description,
+            name: pProduct.title || 'Untitled Product',
+            description: pProduct.description || '',
             price: price,
             imageUrl: imageUrl,
             category: category,
@@ -649,6 +650,10 @@ router.post('/sync-all', async (req, res) => {
       } catch (err) {
         console.error(`[ProductSync] Failed to sync product ${pProduct.id}:`, err);
         errorCount++;
+        errors.push({
+          productId: pProduct.id,
+          error: err instanceof Error ? err.message : 'Unknown error'
+        });
       }
     }
 
@@ -658,7 +663,8 @@ router.post('/sync-all', async (req, res) => {
       stats: {
         total: printifyProducts.length,
         synced: syncedCount,
-        errors: errorCount
+        errors: errorCount,
+        errorDetails: errors.slice(0, 5) // Return first 5 errors to avoid huge payload
       }
     });
 
