@@ -20,7 +20,7 @@ router.get('/', async (_req, res) => {
     if (error) throw error;
 
     // Map to camelCase for frontend
-    const mappedProducts = (allProducts || []).map(p => ({
+    const mappedProducts = (allProducts || []).map((p: any) => ({
       ...p,
       imageUrl: p.image_url,
       isActive: p.is_active,
@@ -268,7 +268,7 @@ router.get('/category/:category', async (req, res) => {
     if (error) throw error;
 
     // Map to camelCase
-    const mappedProducts = (categoryProducts || []).map(p => ({
+    const mappedProducts = (categoryProducts || []).map((p: any) => ({
       ...p,
       imageUrl: p.image_url,
       isActive: p.is_active,
