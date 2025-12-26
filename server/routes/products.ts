@@ -50,11 +50,13 @@ router.get('/:id', async (req, res) => {
     let query = supabase.from('products').select('*, sizes(*)');
 
     // Check if it's a numeric ID
-    const numericId = parseInt(req.params.id);
-    if (!isNaN(numericId)) {
-      query = query.eq('id', numericId);
+    // Check if it's a purely numeric ID (e.g. "123" not "123abc")
+    const isNumeric = /^\d+$/.test(req.params.id);
+
+    if (isNumeric) {
+      query = query.eq('id', parseInt(req.params.id));
     } else {
-      // If not numeric, try looking up by printify_product_id
+      // If not strictly numeric, try looking up by printify_product_id
       query = query.eq('printify_product_id', req.params.id);
     }
 

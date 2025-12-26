@@ -917,8 +917,4 @@ export const printifyHandlers = {
       console.error('Failed to submit order for production:', error);
       res.status(500).json({
         error: 'Failed to submit order for production',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  }
-};
+        message: error instanc
