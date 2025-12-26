@@ -15,7 +15,7 @@ router.get('/', async (_req, res) => {
 
     const { data: allProducts, error } = await supabase
       .from('products')
-      .select('*, sizes(*)');
+      .select('*, product_sizes(*)');
 
     if (error) throw error;
 
@@ -29,7 +29,9 @@ router.get('/', async (_req, res) => {
       printifyData: p.printify_data,
       printifySyncedAt: p.printify_synced_at,
       printifySyncStatus: p.printify_sync_status,
-      createdAt: p.created_at
+      printifySyncStatus: p.printify_sync_status,
+      createdAt: p.created_at,
+      sizes: p.product_sizes || []
     }));
 
     res.json(mappedProducts);
@@ -47,7 +49,7 @@ router.get('/:id', async (req, res) => {
       return res.status(503).json({ error: "Database not configured" });
     }
 
-    let query = supabase.from('products').select('*, sizes(*)');
+    let query = supabase.from('products').select('*, product_sizes(*)');
 
     // Check if it's a numeric ID
     // Check if it's a purely numeric ID (e.g. "123" not "123abc")
@@ -81,7 +83,9 @@ router.get('/:id', async (req, res) => {
       printifyData: product.printify_data,
       printifySyncedAt: product.printify_synced_at,
       printifySyncStatus: product.printify_sync_status,
-      createdAt: product.created_at
+      printifySyncStatus: product.printify_sync_status,
+      createdAt: product.created_at,
+      sizes: product.product_sizes || []
     };
 
     res.json(mappedProduct);
