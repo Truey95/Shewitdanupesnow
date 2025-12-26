@@ -224,12 +224,12 @@ export default function ProductDetail() {
                     <div key={size.size}>
                       <RadioGroupItem
                         value={size.size}
-                        id={size.size}
+                        id={`size-selector-${size.size}`}
                         className="peer sr-only"
                         disabled={size.inStock === 0}
                       />
                       <Label
-                        htmlFor={size.size}
+                        htmlFor={`size-selector-${size.size}`}
                         className="flex h-12 items-center justify-center rounded-md border border-muted peer-data-[state=checked]:border-primary peer-data-[state=checked]:text-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
                       >
                         {size.size}
