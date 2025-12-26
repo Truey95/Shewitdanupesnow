@@ -915,6 +915,11 @@ export const printifyHandlers = {
       res.json(result);
     } catch (error) {
       console.error('Failed to submit order for production:', error);
+      // Safe error message handling
       res.status(500).json({
         error: 'Failed to submit order for production',
-        message: error instanc
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  }
+};
