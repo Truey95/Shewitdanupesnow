@@ -215,9 +215,9 @@ class PrintifyService {
     }
   }
 
-  async getProducts(shopId: string) {
+  async getProducts(shopId: string, page: number = 1, limit: number = 50) {
     this.checkConfiguration();
-    return this.request(`/shops/${shopId}/products.json`);
+    return this.request(`/shops/${shopId}/products.json?page=${page}&limit=${limit}`);
   }
 
   async getProduct(shopId: string, productId: string) {

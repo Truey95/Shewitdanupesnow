@@ -312,8 +312,29 @@ router.post('/sync-all', async (req, res) => {
 
     console.log(`[ProductSync] Starting full sync via Supabase Client for shop ${shopId}`);
     const { printifyService } = await import('../services/printify.js');
-    const response = await printifyService.getProducts(shopId);
-    const printifyProducts = response.data || (Array.isArray(response) ? response : []);
+
+    let allProducts: any[] = [];
+    let currentPage = 1;
+    let lastPage = 1;
+
+    do {
+      console.log(`[ProductSync] Fetching page ${currentPage}...`);
+      const response: any = await printifyService.getProducts(shopId, currentPage); // Ensure getProducts accepts page
+
+      const products = response.data || (Array.isArray(response) ? response : []);
+      allProducts = [...allProducts, ...products];
+
+      if (response.last_page) {
+        lastPage = response.last_page;
+      } else {
+        // If no pagination info, assume single page and stop
+        lastPage = currentPage;
+      }
+
+      currentPage++;
+    } while (currentPage <= lastPage);
+
+    const printifyProducts = allProducts;
 
     console.log(`[ProductSync] Found ${printifyProducts.length} products in Printify`);
 
