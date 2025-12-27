@@ -430,4 +430,9 @@ router.post('/sync-all', async (req, res) => {
       stats: { total: printifyProducts.length, synced: syncedCount, errors: errorCount, errorDetails: errors.slice(0, 5) }
     });
   } catch (error) {
-    console.error('[ProductSync] S
+    console.error('[ProductSync] Sync failed:', error);
+    res.status(500).json({ success: false, error: 'Failed to sync products', details: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});
+
+export default router;
