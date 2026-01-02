@@ -126,7 +126,7 @@ export default function ProductManager({ shopId }: ProductManagerProps) {
         body: JSON.stringify({
           title: editingProduct.title,
           description: editingProduct.description,
-          variants: editingProduct.variants.map(variant => ({
+          variants: editingProduct.variants.map((variant: any) => ({
             ...variant,
             price: Math.round(variant.price * 100) // Convert to cents for Printify
           }))
@@ -403,7 +403,7 @@ export default function ProductManager({ shopId }: ProductManagerProps) {
                             <span className="text-gray-500 ml-2">${variant.price}</span>
                           </div>
                         ))}
-                        {productDetails.data.variants?.length > 3 && (
+                        {productDetails.variants?.length > 3 && (
                           <p className="text-xs text-gray-500">+{productDetails.variants.length - 3} more variants</p>
                         )}
                       </div>
