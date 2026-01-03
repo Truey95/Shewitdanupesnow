@@ -11,6 +11,15 @@ if (!process.env.DATABASE_URL) {
 }
 
 // Create the database connection safely
+if (process.env.DATABASE_URL) {
+  try {
+    const url = new URL(process.env.DATABASE_URL);
+    console.log(`[Database] Connecting to host: ${url.hostname}`);
+  } catch (e) {
+    console.warn("[Database] Failed to parse DATABASE_URL for logging.");
+  }
+}
+
 export const db = process.env.DATABASE_URL
   ? drizzle(new Pool({ connectionString: process.env.DATABASE_URL }), { schema })
   : (new Proxy({}, {
